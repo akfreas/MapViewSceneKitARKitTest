@@ -10,9 +10,9 @@
 		C24E8EBE1F15216700FD7F15 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E8EBD1F15216700FD7F15 /* AppDelegate.swift */; };
 		C24E8EC01F15216700FD7F15 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C24E8EBF1F15216700FD7F15 /* art.scnassets */; };
 		C24E8EC21F15216700FD7F15 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E8EC11F15216700FD7F15 /* ViewController.swift */; };
-		C24E8EC51F15216700FD7F15 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C24E8EC31F15216700FD7F15 /* Main.storyboard */; };
 		C24E8EC71F15216700FD7F15 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C24E8EC61F15216700FD7F15 /* Assets.xcassets */; };
 		C24E8ECA1F15216700FD7F15 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C24E8EC81F15216700FD7F15 /* LaunchScreen.storyboard */; };
+		C24E8ED31F15263F00FD7F15 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24E8ED21F15263F00FD7F15 /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,10 +20,10 @@
 		C24E8EBD1F15216700FD7F15 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C24E8EBF1F15216700FD7F15 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		C24E8EC11F15216700FD7F15 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		C24E8EC41F15216700FD7F15 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C24E8EC61F15216700FD7F15 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C24E8EC91F15216700FD7F15 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C24E8ECB1F15216700FD7F15 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C24E8ED21F15263F00FD7F15 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C24E8ED31F15263F00FD7F15 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +43,7 @@
 			children = (
 				C24E8EBC1F15216700FD7F15 /* MapViewSceneKitARKitTest */,
 				C24E8EBB1F15216700FD7F15 /* Products */,
+				C24E8ED11F15263F00FD7F15 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,12 +61,19 @@
 				C24E8EBD1F15216700FD7F15 /* AppDelegate.swift */,
 				C24E8EBF1F15216700FD7F15 /* art.scnassets */,
 				C24E8EC11F15216700FD7F15 /* ViewController.swift */,
-				C24E8EC31F15216700FD7F15 /* Main.storyboard */,
 				C24E8EC61F15216700FD7F15 /* Assets.xcassets */,
 				C24E8EC81F15216700FD7F15 /* LaunchScreen.storyboard */,
 				C24E8ECB1F15216700FD7F15 /* Info.plist */,
 			);
 			path = MapViewSceneKitARKitTest;
+			sourceTree = "<group>";
+		};
+		C24E8ED11F15263F00FD7F15 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C24E8ED21F15263F00FD7F15 /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -99,6 +108,11 @@
 				TargetAttributes = {
 					C24E8EB91F15216700FD7F15 = {
 						CreatedOnToolsVersion = 9.0;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -128,7 +142,6 @@
 				C24E8EC01F15216700FD7F15 /* art.scnassets in Resources */,
 				C24E8ECA1F15216700FD7F15 /* LaunchScreen.storyboard in Resources */,
 				C24E8EC71F15216700FD7F15 /* Assets.xcassets in Resources */,
-				C24E8EC51F15216700FD7F15 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,14 +160,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		C24E8EC31F15216700FD7F15 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C24E8EC41F15216700FD7F15 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		C24E8EC81F15216700FD7F15 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
