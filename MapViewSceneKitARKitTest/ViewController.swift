@@ -5,7 +5,7 @@
 //  Created by Alexander Freas on 11.07.17.
 //  Copyright © 2017 Alexander Freas. All rights reserved.
 //
-
+import CoreGraphics
 import UIKit
 import SceneKit
 import ARKit
@@ -297,6 +297,9 @@ extension ViewController: ARSessionDelegate {
 		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: startingPoint)
 		let camera = MKMapCamera(lookingAtCenter: newCoordinate, fromEyeCoordinate: startingPoint, eyeAltitude: 500.0)
 		camera.pitch = degreesPitch
+//		let roll = 270.0 - CGFloat(session.currentFrame!.camera.eulerAngles.z).degreesValue()
+//		print("roll: \(roll)")
+//		mapView.transform = CGAffineTransform(rotationAngle: roll.radiansValue())
 		
 		mapView.setCamera(camera, animated: false)
 	}
