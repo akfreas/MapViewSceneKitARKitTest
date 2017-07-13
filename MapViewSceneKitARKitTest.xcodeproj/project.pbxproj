@@ -14,6 +14,7 @@
 		C24E8ECA1F15216700FD7F15 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C24E8EC81F15216700FD7F15 /* LaunchScreen.storyboard */; };
 		C24E8ED31F15263F00FD7F15 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24E8ED21F15263F00FD7F15 /* MapKit.framework */; };
 		C2766CB81F176F5800757340 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2766CB71F176F5800757340 /* Utilities.swift */; };
+		C2766CBA1F17858100757340 /* ARMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2766CB91F17858100757340 /* ARMapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		C24E8ECB1F15216700FD7F15 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C24E8ED21F15263F00FD7F15 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		C2766CB71F176F5800757340 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = ../../../Downloads/PlacingObjects/ARKitExample/Utilities.swift; sourceTree = "<group>"; };
+		C2766CB91F17858100757340 /* ARMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARMapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				C2766CB71F176F5800757340 /* Utilities.swift */,
 				C24E8EBF1F15216700FD7F15 /* art.scnassets */,
 				C24E8EC11F15216700FD7F15 /* ViewController.swift */,
+				C2766CB91F17858100757340 /* ARMapView.swift */,
 				C24E8EC61F15216700FD7F15 /* Assets.xcassets */,
 				C24E8EC81F15216700FD7F15 /* LaunchScreen.storyboard */,
 				C24E8ECB1F15216700FD7F15 /* Info.plist */,
@@ -157,6 +160,7 @@
 			files = (
 				C2766CB81F176F5800757340 /* Utilities.swift in Sources */,
 				C24E8EC21F15216700FD7F15 /* ViewController.swift in Sources */,
+				C2766CBA1F17858100757340 /* ARMapView.swift in Sources */,
 				C24E8EBE1F15216700FD7F15 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

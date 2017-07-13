@@ -285,19 +285,17 @@ extension ViewController: ARSessionDelegate {
 //		print("new location: \(newLocation)")
 //		mapCamera.centerCoordinate = newLocation
 //		mapCamera.pitch = 45.0
-		let point = CGPoint(x: CGFloat(session.currentFrame!.camera.transform.columns.3.x), y: CGFloat(session.currentFrame!.camera.transform.columns.3.z))
-		print("new point: \(point)")
-		let new = self.view.frame.mid + point
-		print("converted center: \(new)")
+//		let point = CGPoint(x: CGFloat(session.currentFrame!.camera.transform.columns.3.x), y: CGFloat(session.currentFrame!.camera.transform.columns.3.z))
+//		print("new point: \(point)")
+//		let new = self.view.frame.mid + point
+//		print("converted center: \(new)")
 		print("pitch: \(pitch.degreesValue()+90)")
 		let degreesPitch = pitch.degreesValue()+90
 		let radiansHeading = CGFloat(session.currentFrame!.camera.eulerAngles.y)
-		let degreesHeading = radiansHeading.degreesValue()
-		print("heading: \(degreesHeading)")
 		
-		let midPointFrame = view.frame.mid
-		let advancedPoint = midPointFrame + point
-		let centerCoordinate = mapView.convert(advancedPoint, toCoordinateFrom: view)
+//		let midPointFrame = view.frame.mid
+//		let advancedPoint = midPointFrame + point
+//		let centerCoordinate = mapView.convert(advancedPoint, toCoordinateFrom: view)
 		
 		let originMapPoint = MKMapPointForCoordinate(startingPoint)
 		var translationAdvanced = sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.y, 2.0))
@@ -312,7 +310,9 @@ extension ViewController: ARSessionDelegate {
 //		print("points advanced: \(pointsAdvanced)")
 //		let advancedMapPoints =
 		
-		let travelledMeters: Double = 0// MKMetersBetweenMapPoints(MKMapPointForCoordinate(startingPoint), MKMapPointForCoordinate(centerCoordinate))
+		let travelledPointDistance = sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.x, 2.0))
+		let travelledMeters: Double = Double(travelledPointDistance * 1000.0)// MKMetersBetweenMapPoints(MKMapPointForCoordinate(startingPoint), MKMapPointForCoordinate(centerCoordinate))
+		
 		let eyeCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: travelledMeters, origin: startingPoint)
 		
 		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: eyeCoordinate)
