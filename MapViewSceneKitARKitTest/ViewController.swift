@@ -45,6 +45,10 @@ extension CGFloat {
     func radiansValue() -> CGFloat {
         return self * CGFloat.pi/180.0
     }
+	
+	func degreesValue() -> CGFloat {
+		return self * 180.0/CGFloat.pi
+	}
 }
 
 class ViewController: UIViewController, ARSCNViewDelegate {
@@ -70,10 +74,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         button.addTarget(self, action: #selector(increasePitch), for: .touchUpInside)
         return button
     }()
-    var currentPitch: CGFloat = 1.0
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
-    }
+	
+	lazy var tapGesture: UITapGestureRecognizer = {
+		let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
+		return tap
+	}()
+	
+	@objc func didTap(gesture: UITapGestureRecognizer) {
+		let tapPoint = gesture.location(in: view)
+		
+		print("tap: \(tapPoint)")
+		let coordinate = mapView.convert(tapPoint, toCoordinateFrom: view)
+		let camera = MKMapCamera(lookingAtCenter: coordinate, fromDistance: 500.0, pitch: 45.0, heading: 0.0)
+		mapView.setCamera(camera, animated: true)
+		
+	}
+	
+    var currentPitch: CGFloat = 45.0
+	
     var distance: CLLocationDistance = 500.0
     @objc func decreasePitch() {
         
@@ -87,12 +105,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        let distance1 = 500 + mapCamera.altitude
 //        let distance = 500 / Double(tan(currentPitch.radiansValue()))
 //
+		let mapPoint = MKMapPointForCoordinate(startingPoint)
+		print("map point: \(mapPoint)")
         let coord = locationWithBearing(bearing: 0.0, distanceMeters: Double(distance), origin: startingPoint)
         let actualDistance = MKMetersBetweenMapPoints(MKMapPointForCoordinate(coord), MKMapPointForCoordinate(startingPoint))
 //        print("actual distance: \(actualDistance)")
         let camera = MKMapCamera(lookingAtCenter: coord, fromEyeCoordinate: startingPoint, eyeAltitude: 100.0)
-        currentPitch += 5.0
-        distance += 100
+        currentPitch -= 5.0
+        distance -= 100
 //        camera.pitch = 45.0
         camera.printDescription()
         mapView.setCamera(camera, animated: true)
@@ -108,7 +128,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 		
 		// Create a new scene
         
-        
+        view.addGestureRecognizer(tapGesture)
         
         session.delegate = self
         sceneView.session = session
@@ -203,7 +223,6 @@ extension ViewController: CLLocationManagerDelegate {
 //		mapView.centerCoordinate = location.coordinate
 	}
 }
-var coordinate: CLLocationCoordinate2D!
 extension ViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         let camera = mapView.camera
@@ -218,7 +237,6 @@ extension ViewController: MKMapViewDelegate {
 
 extension ViewController: ARSessionDelegate {
 	public func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        return
 //        print("transform: \(frame.camera.transform)")
 ////        let pitch = CGFloat(frame.camera.eulerAngles.x * 180.0/Float.pi)
 ////        mapCamera.altitude
@@ -232,8 +250,8 @@ extension ViewController: ARSessionDelegate {
 //        mapCamera.heading = bearing
 //
 //        let angle1 = 90.0 - mapCamera.pitch
-//        let pitch = frame.camera.eulerAngles.x
-//        guard pitch != 0.0 else { return }
+        let pitch = CGFloat(frame.camera.eulerAngles.x)
+        guard pitch != 0.0 else { return }
 //        print("pitch: \(frame.camera.eulerAngles.x)")
 //        let distance1 = CGFloat(mapCamera.altitude) / CGFloat(tan(frame.camera.eulerAngles.x))
 //        print("bearing: \(bearing) distance1: \(distance1)")
@@ -244,12 +262,21 @@ extension ViewController: ARSessionDelegate {
 //		mapCamera = MKMapCamera(lookingAtCenter: location, fromEyeCoordinate: startingPoint, eyeAltitude: 1000)
 //		mapCamera.pitch = pitch
 		
-		
-		
-		
-		let distanceX = session.currentFrame!.camera.transform.columns.3.x
-		let distanceY = session.currentFrame!.camera.transform.columns.3.z
-		
+//		let distance = MKMetersBetweenMapPoints(MKMapPointMake(0, 0), MKMapPointMake(0, 0))
+//		var newPoint = MKMapPointForCoordinate(startingPoint)
+//		let pt = mapView.convert(startingPoint, toPointTo: view)
+//		let point = CGPoint(x: CGFloat(session.currentFrame!.camera.transform.columns.3.x), y: CGFloat(session.currentFrame!.camera.transform.columns.3.z))
+//		let transform = CGAffineTransform(translationX: point.x, y: point.y)
+//
+//		let transformed = __CGPointApplyAffineTransform(pt, transform)
+//		newPoint.x += Double(session.currentFrame!.camera.transform.columns.3.z)
+//		newPoint.y += Double(session.currentFrame!.camera.transform.columns.3.x)
+//		print("new point: \(point)")
+//		let coor = mapView.convert(transformed, toCoordinateFrom: self.view)
+//		mapCamera.centerCoordinate = coor
+//		let distanceX = session.currentFrame!.camera.transform.columns.3.x
+//		let distanceY = session.currentFrame!.camera.transform.columns.3.z
+//
 //		let coord = (distanceX, distanceY)
 //		print("coord: \(coord)")
 //		let pointDistance = sqrt(pow(distanceX, 2.0) + pow(distanceY, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.y, 2.0)) * 1000
@@ -257,8 +284,21 @@ extension ViewController: ARSessionDelegate {
 //		let newLocation = locationWithBearing(bearing: Double(session.currentFrame!.camera.eulerAngles.y), distanceMeters: Double(pointDistance), origin: coordinate)
 //		print("new location: \(newLocation)")
 //		mapCamera.centerCoordinate = newLocation
-		mapCamera.pitch = 45.0
-		mapView.setCamera(mapCamera, animated: false)
+//		mapCamera.pitch = 45.0
+		let point = CGPoint(x: CGFloat(session.currentFrame!.camera.transform.columns.3.x), y: CGFloat(session.currentFrame!.camera.transform.columns.3.z))
+		print("new point: \(point)")
+		let new = self.view.frame.mid + point
+		print("converted center: \(new)")
+		print("pitch: \(pitch.degreesValue()+90)")
+		let degreesPitch = pitch.degreesValue()+90
+		let radiansHeading = CGFloat(session.currentFrame!.camera.eulerAngles.y)
+		let degreesHeading = radiansHeading.degreesValue()
+		print("heading: \(degreesHeading)")
+		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: startingPoint)
+		let camera = MKMapCamera(lookingAtCenter: newCoordinate, fromEyeCoordinate: startingPoint, eyeAltitude: 500.0)
+		camera.pitch = degreesPitch
+		
+		mapView.setCamera(camera, animated: false)
 	}
 	
 	func locationWithBearing(bearing:Double, distanceMeters:Double, origin:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
@@ -275,3 +315,4 @@ extension ViewController: ARSessionDelegate {
 	
 	
 }
+
