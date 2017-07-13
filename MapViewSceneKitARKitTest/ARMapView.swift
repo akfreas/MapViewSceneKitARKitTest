@@ -3,16 +3,37 @@ import UIKit
 import ARKit
 import MapKit
 
+extension CGFloat {
+	
+	func radiansValue() -> CGFloat {
+		return self * CGFloat.pi/180.0
+	}
+	
+	func degreesValue() -> CGFloat {
+		return self * 180.0/CGFloat.pi
+	}
+}
+
 class ARMapView: MKMapView {
 	
 	var session = ARSession()
 	var locationManager: CLLocationManager!
-	let startingPoint: CLLocationCoordinate2D! = nil
+	
+	override var centerCoordinate: CLLocationCoordinate2D {
+		didSet {
+			if startingPoint == nil {
+				startingPoint = centerCoordinate
+			}
+		}
+	}
+	
+	var startingPoint: CLLocationCoordinate2D? = CLLocationCoordinate2D(latitude: 52.5300866,longitude:13.4304882)
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		
 		configureMap()
+		configureARSession()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -21,6 +42,10 @@ class ARMapView: MKMapView {
 	
 	func startARSession() {
 		session.run(ARWorldTrackingSessionConfiguration())
+	}
+	
+	func stopARSession() {
+		session.pause()
 	}
 	
 	func configureARSession() {
@@ -48,10 +73,21 @@ class ARMapView: MKMapView {
 }
 
 extension ARMapView: MKMapViewDelegate {
+	
+	func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+		
+	}
 }
 
 extension ARMapView: ARSessionDelegate {
 	func session(_ session: ARSession, didUpdate frame: ARFrame) {
+		
+		let altitudeScale = 5000.0
+		let minimumAltitude = 100.0
+		let travelledDistanceScale: Float = 1000.0
+		
+		guard let startingPoint = self.startingPoint else { return }
+		
 		let pitch = CGFloat(frame.camera.eulerAngles.x)
 		guard pitch != 0.0 else { return }
 		let cameraTransform = frame.camera.transform
@@ -63,15 +99,21 @@ extension ARMapView: ARSessionDelegate {
 		if cameraTransform.columns.3.z + cameraTransform.columns.3.y < 0 {
 			translationAdvanced = -translationAdvanced
 		}
-		let altitude: Double = 1000.0 * Double(translationAdvanced) + 500
+		let altitude: Double = max(altitudeScale * Double(translationAdvanced) + minimumAltitude, minimumAltitude)
 		
 		let travelledPointDistance = sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.x, 2.0))
-		let travelledMeters: Double = Double(travelledPointDistance * 1000.0)
-		let eyeCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: travelledMeters, origin: startingPoint)
+		let travelledMeters: Double = Double(travelledPointDistance * travelledDistanceScale)
 		
-		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: eyeCoordinate)
+		
+		let eyeCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: travelledMeters, origin: startingPoint)
+		let coordinateDistance = -Double(tan(degreesPitch.radiansValue())) * altitude
+		print("Coordinate distance: \(coordinateDistance)")
+		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: coordinateDistance, origin: eyeCoordinate)
+		
+		
+		
 		let camera = MKMapCamera(lookingAtCenter: newCoordinate, fromEyeCoordinate: eyeCoordinate, eyeAltitude: Double(altitude))
-		camera.pitch = degreesPitch
+//		camera.pitch = degreesPitch
 		
 		setCamera(camera, animated: false)
 	}

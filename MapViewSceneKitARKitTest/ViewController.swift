@@ -57,8 +57,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 	var session = ARSession()
 	var sceneView: ARSCNView!
 	var locationManager: CLLocationManager!
-	var mapView: MKMapView = {
-		let map = MKMapView()
+	var mapView: ARMapView = {
+		let map = ARMapView()
 		return map
 	}()
 	var mapCamera: MKMapCamera = {
@@ -140,14 +140,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 		mapView.showsUserLocation = true
 		mapView.delegate = self
 		mapView.mapType = .satelliteFlyover
-//		mapCamera.pitch = 30.0
 		mapCamera.centerCoordinate = startingPoint
-		mapView.setCamera(mapCamera, animated: true)
-		locationManager = CLLocationManager()
-		locationManager.requestWhenInUseAuthorization()
-		locationManager.delegate = self
-		locationManager.desiredAccuracy = 10.0
-		locationManager.startUpdatingLocation()
     }
 	
 	override func viewDidLayoutSubviews() {
@@ -214,129 +207,5 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
-}
-
-extension ViewController: CLLocationManagerDelegate {
-	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-		guard let location = locations.first else { return }
-		
-//		mapView.centerCoordinate = location.coordinate
-	}
-}
-extension ViewController: MKMapViewDelegate {
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        let camera = mapView.camera
-        camera.printDescription()
-    }
-//	func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-//		mapCamera.centerCoordinate = userLocation.coordinate
-//		coordinate = userLocation.coordinate
-//		mapView.setCamera(mapCamera, animated: true)
-//	}
-}
-
-extension ViewController: ARSessionDelegate {
-	public func session(_ session: ARSession, didUpdate frame: ARFrame) {
-//        print("transform: \(frame.camera.transform)")
-////        let pitch = CGFloat(frame.camera.eulerAngles.x * 180.0/Float.pi)
-////        mapCamera.altitude
-//        let distance = (3000 * sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.y, 2.0))) - 500
-//        print("distance: \(distance)")
-//        mapCamera.pitch = 45.0
-//        let bearing = Double(frame.camera.eulerAngles.y) * 180.0/Double.pi
-//        print("bearing: \(bearing)")
-//
-//        mapCamera.altitude = 1000.0
-//        mapCamera.heading = bearing
-//
-//        let angle1 = 90.0 - mapCamera.pitch
-        let pitch = CGFloat(frame.camera.eulerAngles.x)
-        guard pitch != 0.0 else { return }
-//        print("pitch: \(frame.camera.eulerAngles.x)")
-//        let distance1 = CGFloat(mapCamera.altitude) / CGFloat(tan(frame.camera.eulerAngles.x))
-//        print("bearing: \(bearing) distance1: \(distance1)")
-//        let location = locationWithBearing(bearing: Double(frame.camera.eulerAngles.y), distanceMeters: Double(distance1), origin: startingPoint)
-//
-//        mapCamera.centerCoordinate = startingPoint
-//		mapCamera = MKMapCamera(lookingAtCenter: location, fromDistance: 1000, pitch: 45.0, heading: bearing)
-//		mapCamera = MKMapCamera(lookingAtCenter: location, fromEyeCoordinate: startingPoint, eyeAltitude: 1000)
-//		mapCamera.pitch = pitch
-		
-//		let distance = MKMetersBetweenMapPoints(MKMapPointMake(0, 0), MKMapPointMake(0, 0))
-//		var newPoint = MKMapPointForCoordinate(startingPoint)
-//		let pt = mapView.convert(startingPoint, toPointTo: view)
-//		let point = CGPoint(x: CGFloat(session.currentFrame!.camera.transform.columns.3.x), y: CGFloat(session.currentFrame!.camera.transform.columns.3.z))
-//		let transform = CGAffineTransform(translationX: point.x, y: point.y)
-//
-//		let transformed = __CGPointApplyAffineTransform(pt, transform)
-//		newPoint.x += Double(session.currentFrame!.camera.transform.columns.3.z)
-//		newPoint.y += Double(session.currentFrame!.camera.transform.columns.3.x)
-//		print("new point: \(point)")
-//		let coor = mapView.convert(transformed, toCoordinateFrom: self.view)
-//		mapCamera.centerCoordinate = coor
-//		let distanceX = session.currentFrame!.camera.transform.columns.3.x
-//		let distanceY = session.currentFrame!.camera.transform.columns.3.z
-//
-//		let coord = (distanceX, distanceY)
-//		print("coord: \(coord)")
-//		let pointDistance = sqrt(pow(distanceX, 2.0) + pow(distanceY, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.y, 2.0)) * 1000
-//		print("pointDistance: \(pointDistance)")
-//		let newLocation = locationWithBearing(bearing: Double(session.currentFrame!.camera.eulerAngles.y), distanceMeters: Double(pointDistance), origin: coordinate)
-//		print("new location: \(newLocation)")
-//		mapCamera.centerCoordinate = newLocation
-//		mapCamera.pitch = 45.0
-//		let point = CGPoint(x: CGFloat(session.currentFrame!.camera.transform.columns.3.x), y: CGFloat(session.currentFrame!.camera.transform.columns.3.z))
-//		print("new point: \(point)")
-//		let new = self.view.frame.mid + point
-//		print("converted center: \(new)")
-		print("pitch: \(pitch.degreesValue()+90)")
-		let degreesPitch = pitch.degreesValue()+90
-		let radiansHeading = CGFloat(session.currentFrame!.camera.eulerAngles.y)
-		
-//		let midPointFrame = view.frame.mid
-//		let advancedPoint = midPointFrame + point
-//		let centerCoordinate = mapView.convert(advancedPoint, toCoordinateFrom: view)
-		
-		let originMapPoint = MKMapPointForCoordinate(startingPoint)
-		var translationAdvanced = sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.y, 2.0))
-		
-		if session.currentFrame!.camera.transform.columns.3.z + session.currentFrame!.camera.transform.columns.3.y < 0 {
-			translationAdvanced = -translationAdvanced
-		}
-		
-		let altitude: Double = 1000.0 * Double(translationAdvanced) + 500
-		
-		print("new altitude: \(altitude)")
-//		print("points advanced: \(pointsAdvanced)")
-//		let advancedMapPoints =
-		
-		let travelledPointDistance = sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.x, 2.0))
-		let travelledMeters: Double = Double(travelledPointDistance * 1000.0)// MKMetersBetweenMapPoints(MKMapPointForCoordinate(startingPoint), MKMapPointForCoordinate(centerCoordinate))
-		
-		let eyeCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: travelledMeters, origin: startingPoint)
-		
-		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: eyeCoordinate)
-		let camera = MKMapCamera(lookingAtCenter: newCoordinate, fromEyeCoordinate: eyeCoordinate, eyeAltitude: Double(altitude))
-		camera.pitch = degreesPitch
-//		let roll = 270.0 - CGFloat(session.currentFrame!.camera.eulerAngles.z).degreesValue()
-//		print("roll: \(roll)")
-//		mapView.transform = CGAffineTransform(rotationAngle: roll.radiansValue())
-		
-		mapView.setCamera(camera, animated: false)
-	}
-	
-	func locationWithBearing(bearing:Double, distanceMeters:Double, origin:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
-		let distRadians = distanceMeters / (6372797.6) // earth radius in meters
-		
-		let lat1 = origin.latitude * Double.pi / 180
-		let lon1 = origin.longitude * Double.pi / 180
-		
-		let lat2 = asin(sin(lat1) * cos(distRadians) + cos(lat1) * sin(distRadians) * cos(bearing))
-		let lon2 = lon1 + atan2(sin(bearing) * sin(distRadians) * cos(lat1), cos(distRadians) - sin(lat1) * sin(lat2))
-		
-		return CLLocationCoordinate2D(latitude: lat2 * 180 / Double.pi, longitude: lon2 * 180 / Double.pi)
-	}
-	
-	
 }
 
