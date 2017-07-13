@@ -294,8 +294,29 @@ extension ViewController: ARSessionDelegate {
 		let radiansHeading = CGFloat(session.currentFrame!.camera.eulerAngles.y)
 		let degreesHeading = radiansHeading.degreesValue()
 		print("heading: \(degreesHeading)")
-		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: startingPoint)
-		let camera = MKMapCamera(lookingAtCenter: newCoordinate, fromEyeCoordinate: startingPoint, eyeAltitude: 500.0)
+		
+		let midPointFrame = view.frame.mid
+		let advancedPoint = midPointFrame + point
+		let centerCoordinate = mapView.convert(advancedPoint, toCoordinateFrom: view)
+		
+		let originMapPoint = MKMapPointForCoordinate(startingPoint)
+		var translationAdvanced = sqrt(pow(session.currentFrame!.camera.transform.columns.3.z, 2.0) + pow(session.currentFrame!.camera.transform.columns.3.y, 2.0))
+		
+		if session.currentFrame!.camera.transform.columns.3.z + session.currentFrame!.camera.transform.columns.3.y < 0 {
+			translationAdvanced = -translationAdvanced
+		}
+		
+		let altitude: Double = 1000.0 * Double(translationAdvanced) + 500
+		
+		print("new altitude: \(altitude)")
+//		print("points advanced: \(pointsAdvanced)")
+//		let advancedMapPoints =
+		
+		let travelledMeters: Double = 0// MKMetersBetweenMapPoints(MKMapPointForCoordinate(startingPoint), MKMapPointForCoordinate(centerCoordinate))
+		let eyeCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: travelledMeters, origin: startingPoint)
+		
+		let newCoordinate = locationWithBearing(bearing: Double(-radiansHeading), distanceMeters: 500, origin: eyeCoordinate)
+		let camera = MKMapCamera(lookingAtCenter: newCoordinate, fromEyeCoordinate: eyeCoordinate, eyeAltitude: Double(altitude))
 		camera.pitch = degreesPitch
 //		let roll = 270.0 - CGFloat(session.currentFrame!.camera.eulerAngles.z).degreesValue()
 //		print("roll: \(roll)")
